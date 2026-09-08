@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load dashboard_extras %}
+{% block content %}
+    <h1>My MOV Submissions</h1>
+
+    {% if period %}
+        <p>Appraisal Period: <strong>{{ period.name }}</strong> ({{ period.start_date }} to {{ period.end_date }})</p>
+    {% else %}
+        <p><em>No active appraisal period at the moment.</em></p>
+    {% endif %}
+
+    {% for standard in standards %}
+        <div class="standard-block">
+            <h2>{{ standard.name }}</h2>
+
+            {% for fa in standard.focus_areas.all %}
+                <div class="focus-area">
+                    <h3>{{ fa.code }} — {{ fa.description }}</h3>
+
+                    {% for mov in fa.movs.all %}
+    <div class="mov-item">
+        {{ mov.title }}
+        {% with status=submissions_by_mov|get_item:mov.id %}
+            {% if status == 'approved' %}
+                <span class="status-done">✔ Approved</span>
+            {% elif status == 'rejected' %}
+                <span class="status-pending" style="color:red;">✘ Rejected — please resubmit</span>
+            {% elif status == 'pending' %}
+                <span class="status-pending">⏳ Pending review</span>
+            {% else %}
+                <span class="status-pending">Not submitted</span>
+            {% endif %}
+        {% endwith %}
+        <a class="button" href="{% url 'submit_mov' mov.id %}">
+            {% if status %}Update{% else %}Upload{% endif %}
+        </a>
+    </div>
+{% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+{% endblock %}

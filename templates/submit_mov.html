@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>Submit Evidence</h1>
+    <h3>{{ mov.title }}</h3>
+    <p>Focus Area: {{ mov.focus_area.code }} — {{ mov.focus_area.description }}</p>
+
+    {% if existing %}
+        <p><em>You already submitted: <a href="{{ existing.file.url }}" target="_blank">{{ existing.file.name }}</a> (status: {{ existing.status }}). Uploading a new file will replace it.</em></p>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>
+            <label>Choose file (PDF or image):</label><br>
+            <input type="file" name="file" accept=".pdf,.jpg,.jpeg,.png">
+        </p>
+        <p>
+            <label>Remarks (optional):</label><br>
+            <textarea name="remarks" rows="3" cols="50"></textarea>
+        </p>
+        <button type="submit">Submit</button>
+    </form>
+
+    <p><a href="{% url 'dashboard' %}">← Back to dashboard</a></p>
+{% endblock %}
